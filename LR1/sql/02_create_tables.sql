@@ -1,7 +1,4 @@
--- Основные сущности: warehouses, employees, suppliers, products,
--- inventory, receipts, receipt_items, shipments, shipment_items.
-
-CREATE TABLE warehouses (
+CREATE TABLE warehouses (  --склады
     warehouse_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     warehouse_code VARCHAR(20) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
@@ -9,7 +6,7 @@ CREATE TABLE warehouses (
     capacity_m3 DECIMAL(12,2) NOT NULL CHECK (capacity_m3 > 0)
 );
 
-CREATE TABLE suppliers (
+CREATE TABLE suppliers ( -- поставщики
     supplier_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     supplier_name VARCHAR(150) NOT NULL,
     tax_id VARCHAR(20) NOT NULL UNIQUE,
@@ -17,7 +14,7 @@ CREATE TABLE suppliers (
     email VARCHAR(254)
 );
 
-CREATE TABLE products (
+CREATE TABLE products ( -- товары
     product_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     sku VARCHAR(40) NOT NULL UNIQUE,
     product_name VARCHAR(150) NOT NULL,
@@ -26,7 +23,7 @@ CREATE TABLE products (
         CHECK (min_stock >= 0)
 );
 
-CREATE TABLE employees (
+CREATE TABLE employees ( -- сотрудники
     employee_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     warehouse_id BIGINT NOT NULL,
     full_name VARCHAR(150) NOT NULL,
@@ -38,8 +35,7 @@ CREATE TABLE employees (
         ON DELETE RESTRICT
 );
 
--- Остатки: одна строка на пару склад + товар.
-CREATE TABLE inventory (
+CREATE TABLE inventory ( -- остатки на складах
     warehouse_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     quantity DECIMAL(12,3) NOT NULL DEFAULT 0
@@ -56,7 +52,7 @@ CREATE TABLE inventory (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE receipts (
+CREATE TABLE receipts ( -- приёмки
     receipt_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     warehouse_id BIGINT NOT NULL,
     supplier_id BIGINT NOT NULL,
@@ -75,7 +71,7 @@ CREATE TABLE receipts (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE receipt_items (
+CREATE TABLE receipt_items ( --данные приёмки
     receipt_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     quantity DECIMAL(12,3) NOT NULL CHECK (quantity > 0),
@@ -91,7 +87,7 @@ CREATE TABLE receipt_items (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE shipments (
+CREATE TABLE shipments ( -- отгрузки
     shipment_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     warehouse_id BIGINT NOT NULL,
     shipment_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -106,7 +102,7 @@ CREATE TABLE shipments (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE shipment_items (
+CREATE TABLE shipment_items ( -- данные отгрузки
     shipment_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     quantity DECIMAL(12,3) NOT NULL CHECK (quantity > 0),
